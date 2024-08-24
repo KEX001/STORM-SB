@@ -10,6 +10,11 @@
     ],
     "repository": "https://github.com/KEX001/STORM-SB",
     "env": {
+      "MBOT_USERNAME": {
+        "description": "ꜰɪʟʟ ʏᴏᴜʀ ᴍᴀɪɴ ʙᴏᴛ ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ᴛʜᴇ ᴜꜱᴇʀɴᴀᴍᴇ ᴏꜰ ᴛʜᴇ ʙᴏᴛ ᴛᴏᴋᴇɴ ʏᴏᴜ ꜰɪʟʟᴇᴅ ɪɴ ʙᴏᴛ_ᴛᴏᴋᴇɴ [ʙᴏᴛ_ᴛᴏᴋᴇɴ1/ʙᴏᴛ_ᴛᴏᴋᴇɴ/ᴋᴇx1]",
+        "value": "",
+        "required": true
+      },        
       "BOT_TOKEN": {
         "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
         "value": "",
