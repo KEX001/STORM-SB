@@ -1,0 +1,94 @@
+{
+    "name": "ꜱ ᴛ ᴏ ʀ ᴍ",
+    "logo": "https://graph.org/file/c3b279aee41f8bbe6466b.jpg",
+    "keywords": [
+        "telegram",
+        "telethon",
+        "telegram-bot",
+        "PythonX",
+        "SpamBots"
+    ],
+    "repository": "https://github.com/KEX001/STORM-SB",
+    "env": {
+      "BOT_TOKEN": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN2": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN3": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN4": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN5": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN6": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN7": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN8": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN9": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "BOT_TOKEN10": {
+        "description": "ᴛᴇʟᴇɢʀᴀᴍ ʙᴏᴛ ᴛᴏᴋᴇɴ ɢᴇᴛ ᴛʜɪꜱ ᴠᴀʟᴜᴇ ꜰʀᴏᴍ ʙᴏᴛꜰᴀᴛʜᴇʀ",
+        "value": "",
+        "required": true
+      },
+      "CMD_HNDLR": {
+        "description": "ᴄᴜꜱᴛᴏᴍ ᴄᴏᴍᴍᴀɴᴅ ʜᴀɴᴅʟᴇʀ",
+        "value": ".",
+        "required": false
+      },
+      "SUDO_USERS": {
+        "description": "ꜱᴜᴅᴏ ᴜꜱᴇʀꜱ ɪᴅ ꜱᴘᴀᴄᴇ ʙʏ ꜱᴘᴀᴄᴇ",
+        "value": "6257927828",
+        "required": false
+      },
+      "OWNER_ID": {
+        "description": "ᴏᴡɴᴇʀ ɪᴅ",
+        "value": "6257927828",
+        "required": true
+      },
+      "HEROKU_API_KEY": {
+        "description": "ʏᴏᴜʀ ʜᴇʀᴏᴋᴜ ᴀᴘɪ ᴋᴇʏ ᴛᴏ ᴜᴘᴅᴀᴛᴇ ʏᴏᴜʀ ʙᴏᴛ",
+        "value": "",
+        "required": false 
+      },
+      "HEROKU_APP_NAME": {
+        "description": "ʏᴏᴜʀ ᴀᴘᴘ ɴᴀᴍᴇ ᴛᴏ ᴜᴘᴅᴀᴛᴇ ʏᴏᴜʀ ʙᴏᴛ",
+        "value": "",
+        "required": false  
+      }
+    },
+  "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ]
+}
