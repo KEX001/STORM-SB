@@ -11,6 +11,7 @@ API_HASH = "312d861b78efcd1b02183b2ab52a83a4"
 CMD_HNDLR = getenv("CMD_HNDLR", default="!")
 HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", None)
 HEROKU_API_KEY = getenv("HEROKU_API_KEY", None)
+MBOT_USERNAME = getenv("MBOT_USERNAME", default=None)
 BOT_TOKEN = getenv("BOT_TOKEN", default=None)
 BOT_TOKEN2 = getenv("BOT_TOKEN2", default=None)
 BOT_TOKEN3 = getenv("BOT_TOKEN3", default=None)
