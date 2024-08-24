@@ -36,11 +36,11 @@ async def start(event):
         TEXT += f"» **ᴘʏᴛʜᴏɴ :** `3.11` \n"
         TEXT += f"» **ᴛᴇʟᴇᴛʜᴏɴ :** `{__version__}`\n➖➖➖➖➖➖➖➖➖➖➖\n"
         TEXT += f"» **ᴘᴏᴡᴇʀᴇᴅ ʙʏ ꜱᴛᴏʀᴍ ᴀɪ** 🌟\n"
-        TEXT += f"🔍 **ᴅɪsᴄᴏᴠᴇʀ ᴍᴏʀᴇ**:\n"
-        TEXT += f"   - **[ꜱᴛᴏʀᴍ ᴄʜᴀᴛᴢ](https://t.me/STORM_CHATZ)**\n"
-        TEXT += f"   - **[ꜱᴛᴏʀᴍ ᴛᴇᴄʜ](https://t.me/STORM_TECHH)**\n"
-        TEXT += f"   - **[ᴋᴇx](https://t.me/kexx_XD)**: ᴄᴏɴɴᴇᴄᴛ ᴡɪᴛʜ ᴛʜᴇ ᴅᴇᴠᴇʟᴏᴘᴇʀ.\n"
-        TEXT += f"**sᴜᴘᴘᴏʀᴛ**: ɪꜰ ʏᴏᴜ ɴᴇᴇᴅ ᴀꜱꜱɪꜱᴛᴀɴᴄᴇ, ᴅᴏɴ'ᴛ ʜᴇꜱɪᴛᴀᴛᴇ ᴛᴏ ᴀꜱᴋ!\n➖➖➖➖➖➖➖➖➖➖➖"          
+        TEXT += f"🔍 **ᴅɪsᴄᴏᴠᴇʀ ᴍᴏʀᴇ:-**\n"
+        TEXT += f"   » **[ꜱᴛᴏʀᴍ ᴄʜᴀᴛᴢ](https://t.me/STORM_CHATZ)**\n"
+        TEXT += f"   » **[ꜱᴛᴏʀᴍ ᴛᴇᴄʜ](https://t.me/STORM_TECHH)**\n"
+        TEXT += f"   » **[ᴋᴇx](https://t.me/kexx_XD): ᴄᴏɴɴᴇᴄᴛ ᴡɪᴛʜ ᴛʜᴇ ᴅᴇᴠᴇʟᴏᴘᴇʀ.**\n"
+        TEXT += f"**sᴜᴘᴘᴏʀᴛ: ɪꜰ ʏᴏᴜ ɴᴇᴇᴅ ᴀꜱꜱɪꜱᴛᴀɴᴄᴇ, ᴅᴏɴ'ᴛ ʜᴇꜱɪᴛᴀᴛᴇ ᴛᴏ ᴀꜱᴋ**\n➖➖➖➖➖➖➖➖➖➖➖"          
         await event.client.send_file(
                     event.chat_id,  
                     "https://graph.org/file/c3b279aee41f8bbe6466b.jpg",
