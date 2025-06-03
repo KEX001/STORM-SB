@@ -1,30 +1,55 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -eo pipefail
 
-set -e
+DEFAULT_PORT=8080
+DEFAULT_FLASK_APP="kex:create_app"
+WORKERS=${WORKERS:-4}
+LOG_FILE="main.log"
+GUNICORN_OPTS=(-w "$WORKERS" -b "0.0.0.0:${PORT:-$DEFAULT_PORT}" "$FLASK_APP")
 
-if [ -z "$PORT" ]; then
-  echo "ᴘᴏʀᴛ ɪꜱ ɴᴏᴛ ꜱᴇᴛ. ꜱᴛᴏʀᴍ ᴀɪ ɪꜱ ᴅᴇꜰᴀᴜʟᴛɪɴɢ ᴛᴏ 8080 🌐"
-  PORT=8080
-fi
-
-if [ -z "$FLASK_APP" ]; then
-  echo "ꜰʟᴀꜱᴋ ᴀᴘᴘ ɪꜱ ɴᴏᴛ ꜱᴇᴛ. [ꜱᴛᴏʀᴍ ᴀɪ] ɪꜱ ᴅɪʀᴇᴄᴛʟʏ ʙᴏᴏᴛɪɴɢ ᴛᴏ ɪᴛꜱ ꜱᴇʀᴠᴇʀ ꜰʟᴀꜱᴋ ⚡"
-  export FLASK_APP=kex:create_app
-fi
-
-function shutdown {
-    echo "ᴇxᴇᴄᴜᴛɪɴɢ ᴀ ꜱᴍᴏᴏᴛʜ ᴇxɪᴛ... ʙʀɪɴɢɪɴɢ ᴛʜᴇ ꜱᴛᴏʀᴍ ʙᴏᴛ ᴛᴏ ᴀ ꜱᴀꜰᴇ ʜᴀʟᴛ 🌪️"
-    kill -TERM "$gunicorn_pid" 2>/dev/null
-    wait "$gunicorn_pid"
-    echo "ꜰᴏᴜɴᴅ ᴀ ꜱᴇʀᴠᴇʀ ᴇʀʀᴏʀ. ʏᴏᴜʀ ᴅᴇᴘʟᴏʏᴍᴇɴᴛ ᴍᴀʏ ɴᴏᴛ ʙᴇ ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴛᴏ ᴛʜᴇ ꜱᴛᴏʀᴍ'ꜱ ꜱᴇʀᴠᴇʀ. ꜱʜᴜᴛᴛɪɴɢ ᴅᴏᴡɴ ᴛʜᴇ ᴅᴇᴘʟᴏʏᴍᴇɴᴛ ᴛᴏ ᴋᴇᴇᴘ ʏᴏᴜʀ ʙᴏᴛ ꜱᴀꜰᴇ... 🔒"
+setup_logging() {
+    exec > >(tee -a "$LOG_FILE") 2>&1
+    echo "=== Storm Bot Startup $(date) ==="
 }
 
-trap shutdown SIGTERM
+validate_env() {
+    if [ -z "$PORT" ]; then
+        echo "⚠️  PORT not set. Defaulting to $DEFAULT_PORT"
+        export PORT=$DEFAULT_PORT
+    fi
 
-gunicorn -w 4 -b 0.0.0.0:$PORT kex:create_app &
-gunicorn_pid=$!
+    if [ -z "$FLASK_APP" ]; then
+        echo "⚠️  FLASK_APP not set. Defaulting to $DEFAULT_FLASK_APP"
+        export FLASK_APP=$DEFAULT_FLASK_APP
+    fi
+}
 
-echo "ꜱᴛᴀʀᴛɪɴɢ ʏᴏᴜʀ ꜱᴛᴏʀᴍ ꜱᴘᴀᴍ ʙᴏᴛ [ᴘʀɪᴍᴇ ᴠᴇʀꜱɪᴏɴ ᴠ3.1.1] ⚡"
-python3 main.py >> main.log 2>&1 &
+cleanup() {
+    echo "🛑 Initiating graceful shutdown..."
+    kill -TERM "$gunicorn_pid" "$python_pid" 2>/dev/null || true
+    wait "$gunicorn_pid" "$python_pid" || true
+    echo "✅ Service shutdown complete"
+}
 
-wait "$gunicorn_pid"
+main() {
+    setup_logging
+    validate_env
+
+    trap cleanup SIGTERM SIGINT ERR
+
+    echo "🚀 Starting Storm Spam Bot [Prime Version v3.1.1]"
+    echo "🔌 Gunicorn serving on port $PORT with $WORKERS workers"
+    
+    gunicorn "${GUNICORN_OPTS[@]}" &
+    gunicorn_pid=$!
+    
+    python3 main.py &
+    python_pid=$!
+
+    echo "📌 Process IDs - Gunicorn: $gunicorn_pid, Python: $python_pid"
+    echo "📝 Logging output to $LOG_FILE"
+    
+    wait "$gunicorn_pid"
+}
+
+main "$@"
