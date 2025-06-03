@@ -1,7 +1,20 @@
-telethon
-cryptg
-heroku3
-flask
-flask_restful
-gunicorn
-python-dotenv
+# Core dependencies
+telethon==2.4.0
+cryptg==0.4.0
+
+# Web server
+flask==3.0.2
+flask_restful==0.3.10
+gunicorn==21.2.0
+
+# Heroku integration
+heroku3==5.0.3
+
+# Environment management
+python-dotenv==1.0.1
+
+# Async/await backport (for Python < 3.7)
+async_generator==1.10
+
+# Security dependencies
+pycryptodome==3.20.0
