@@ -1,41 +1,75 @@
 import logging
+import os
+from typing import List, Optional
 from telethon import TelegramClient
-from os import getenv
-from strings.helpers import DEV
 from dotenv import load_dotenv
+from strings.helpers import DEV
 
-logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s', level=logging.WARNING)
+load_dotenv()
 
-API_ID = 18136872
-API_HASH = "312d861b78efcd1b02183b2ab52a83a4"
-CMD_HNDLR = getenv("CMD_HNDLR", default="!")
-HEROKU_APP_NAME = getenv("HEROKU_APP_NAME", None)
-HEROKU_API_KEY = getenv("HEROKU_API_KEY", None)
-MBOT_USERNAME = getenv("MBOT_USERNAME", default=None)
-BOT_TOKEN = getenv("BOT_TOKEN", default=None)
-BOT_TOKEN2 = getenv("BOT_TOKEN2", default=None)
-BOT_TOKEN3 = getenv("BOT_TOKEN3", default=None)
-BOT_TOKEN4 = getenv("BOT_TOKEN4", default=None)
-BOT_TOKEN5 = getenv("BOT_TOKEN5", default=None)
-BOT_TOKEN6 = getenv("BOT_TOKEN6", default=None)
-BOT_TOKEN7 = getenv("BOT_TOKEN7", default=None)
-BOT_TOKEN8 = getenv("BOT_TOKEN8", default=None)
-BOT_TOKEN9 = getenv("BOT_TOKEN9", default=None)
-BOT_TOKEN10 = getenv("BOT_TOKEN10", default=None)
+logging.basicConfig(
+    format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',
+    level=logging.WARNING
+)
+logger = logging.getLogger(__name__)
 
-SUDO_USERS = list(map(lambda x: int(x), getenv("SUDO_USERS", default="6257927828").split()))
-for x in DEV:
-    SUDO_USERS.append(x)
-OWNER_ID = int(getenv("OWNER_ID", default="6257927828"))
-SUDO_USERS.append(OWNER_ID)
+class BotConfig:
 
-KEX1 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 1', API_ID, API_HASH).start(bot_token=BOT_TOKEN)
-KEX2 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 2', API_ID, API_HASH).start(bot_token=BOT_TOKEN2)
-KEX3 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 3', API_ID, API_HASH).start(bot_token=BOT_TOKEN3)
-KEX4 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 4', API_ID, API_HASH).start(bot_token=BOT_TOKEN4)
-KEX5 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 5', API_ID, API_HASH).start(bot_token=BOT_TOKEN5)
-KEX6 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 6', API_ID, API_HASH).start(bot_token=BOT_TOKEN6)
-KEX7 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 7', API_ID, API_HASH).start(bot_token=BOT_TOKEN7)
-KEX8 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 8', API_ID, API_HASH).start(bot_token=BOT_TOKEN8)
-KEX9 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 9', API_ID, API_HASH).start(bot_token=BOT_TOKEN9)
-KEX10 = TelegramClient('ꜱ ᴛ ᴏ ʀ ᴍ 10', API_ID, API_HASH).start(bot_token=BOT_TOKEN10)
+    API_ID: int = 18136872
+    API_HASH: str = "312d861b78efcd1b02183b2ab52a83a4"
+    
+    CMD_HNDLR: str = os.getenv("CMD_HNDLR", "!")
+    
+    HEROKU_APP_NAME: Optional[str] = os.getenv("HEROKU_APP_NAME")
+    HEROKU_API_KEY: Optional[str] = os.getenv("HEROKU_API_KEY")
+    
+    MBOT_USERNAME: Optional[str] = os.getenv("MBOT_USERNAME")
+
+    BOT_TOKENS: List[Optional[str]] = [
+        os.getenv("BOT_TOKEN"),
+        os.getenv("BOT_TOKEN2"),
+        os.getenv("BOT_TOKEN3"),
+        os.getenv("BOT_TOKEN4"),
+        os.getenv("BOT_TOKEN5"),
+        os.getenv("BOT_TOKEN6"),
+        os.getenv("BOT_TOKEN7"),
+        os.getenv("BOT_TOKEN8"),
+        os.getenv("BOT_TOKEN9"),
+        os.getenv("BOT_TOKEN10")
+    ]
+    
+    OWNER_ID: int = int(os.getenv("OWNER_ID", "6257927828"))
+    SUDO_USERS: List[int] = list(map(int, os.getenv("SUDO_USERS", "6257927828").split()))
+    
+    def __init__(self):
+        self.SUDO_USERS.extend(DEV)
+        self.SUDO_USERS.append(self.OWNER_ID)
+        self.validate_tokens()
+        
+    def validate_tokens(self):
+        if not all(self.BOT_TOKENS[:5]):
+            logger.error("Missing one or more compulsory bot tokens (1-5)")
+            raise ValueError("Compulsory bot tokens not configured")
+
+    def initialize_bots(self):
+        bots = []
+        for i, token in enumerate(self.BOT_TOKENS, 1):
+            if token:
+                try:
+                    client = TelegramClient(f'STORM {i}', self.API_ID, self.API_HASH)
+                    client.start(bot_token=token)
+                    bots.append(client)
+                    logger.info(f"Successfully initialized STORM {i}")
+                except Exception as e:
+                    logger.error(f"Failed to initialize STORM {i}: {str(e)}")
+                    if i <= 5: 
+                        raise
+        return bots
+
+try:
+    config = BotConfig()
+    KEX1, KEX2, KEX3, KEX4, KEX5, *optional_bots = config.initialize_bots()
+    KEX6, KEX7, KEX8, KEX9, KEX10 = optional_bots + [None]*(5-len(optional_bots))
+except Exception as e:
+    logger.critical(f"Configuration failed: {str(e)}")
+    raise
