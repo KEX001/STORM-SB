@@ -34,17 +34,17 @@ async def update_bot(e):
             if "refs/heads/" in branch_output:
                 default_branch = branch_output.split("refs/heads/")[1].split()[0]
                 
-            # Reset hard to upstream default branch
-            update_output = run(f"git reset --hard origin/{default_branch}")
+            # Merge upstream default branch
+            update_output = run(f"git pull origin {default_branch}")
             
-            if "is up to date" in update_output or "HEAD is now at" in update_output:
+            if "Already up to date" in update_output or "Fast-forward" in update_output or "Merge made" in update_output:
                 await status_msg.edit("<blockquote><b>» ᴜᴘᴅᴀᴛᴇ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟ! ʀᴇꜱᴛᴀʀᴛɪɴɢ ʙᴏᴛ... 🔄</b></blockquote>", parse_mode='html')
                 
                 # Restart the bot process
                 args = [sys.executable, "main.py"]
                 os.execle(sys.executable, *args, os.environ)
             else:
-                await status_msg.edit(f"<blockquote><b>» ᴜᴘᴅᴀᴛᴇ ꜰᴀɪʟᴇᴅ:</b> <code>{update_output}</code></blockquote>", parse_mode='html')
+                await status_msg.edit(f"<blockquote><b>» ᴜᴘᴅᴀᴛᴇ ꜰᴀɪʟᴇᴅ ᴏʀ ᴄᴏɴꜰʟɪᴄᴛꜱ ᴏᴄᴄᴜʀʀᴇᴅ:</b> <code>{update_output}</code></blockquote>", parse_mode='html')
                 
         except Exception as err:
             await status_msg.edit(f"<blockquote><b>» ᴇʀʀᴏʀ ᴅᴜʀɪɴɢ ᴜᴘᴅᴀᴛᴇ:</b> <code>{str(err)}</code></blockquote>", parse_mode='html')
