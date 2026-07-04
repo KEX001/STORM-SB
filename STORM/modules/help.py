@@ -92,7 +92,10 @@ owner_msg = f"""
  ᴜꜱᴀɢᴇ : <code>{hl}protect <ʀᴇᴘʟʏ/ɪᴅ></code> / <code>{hl}unprotect <ʀᴇᴘʟʏ/ɪᴅ></code>
  
  • ʀᴇꜱᴛᴀʀᴛ ʙᴏᴛ
- ᴜꜱᴀɢᴇ : <code>{hl}restart</code></blockquote>
+ ᴜꜱᴀɢᴇ : <code>{hl}restart</code>
+ 
+ • ᴜᴘᴅᴀᴛᴇ ʙᴏᴛ
+ ᴜꜱᴀɢᴇ : <code>{hl}update</code></blockquote>
 """      
           
 raid_msg = f"""
