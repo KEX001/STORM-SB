@@ -1,228 +1,208 @@
-from telethon import events, Button
+from telethon import Button
+import config
+from config import CMD_HNDLR as hl
+from STORM.client_manager import on_cmd, on_callback
+import asyncio
+import random
 
-from config import KEX1, KEX2, KEX3, KEX4, KEX5, KEX6, KEX7, KEX8, KEX9, KEX10, SUDO_USERS, CMD_HNDLR as hl
+class EventCoordinator:
+    def __init__(self):
+        self._receivers = {}
+        self._chosen = {}
+        self._lock = asyncio.Lock()
 
+    async def resolve_responder(self, event_key: str, client_id: int) -> bool:
+        async with self._lock:
+            if event_key not in self._receivers:
+                self._receivers[event_key] = []
+            if client_id not in self._receivers[event_key]:
+                self._receivers[event_key].append(client_id)
+        await asyncio.sleep(0.08)
+        async with self._lock:
+            if event_key not in self._chosen:
+                self._chosen[event_key] = random.choice(self._receivers[event_key])
+                async def _sweep():
+                    await asyncio.sleep(5.0)
+                    async with self._lock:
+                        self._receivers.pop(event_key, None)
+                        self._chosen.pop(event_key, None)
+                asyncio.create_task(_sweep())
+            return self._chosen[event_key] == client_id
+
+coordinator = EventCoordinator()
 
 HELP_STRING = f"""
-✨ **•─╼⃝𖠁 ʙᴏᴛ ʜᴇʟᴘ 𖠁⃝╾─•** ✨
-
-**[ꜱᴛᴏʀᴍ  ꜱᴘᴀᴍ ʙᴏᴛ](https://t.me/Kexx_XD) ʜᴇʟᴘ ᴍᴇɴᴜ** 🥀
-
-**ʜᴇʟᴘ ᴍᴇɴᴜ ᴘᴏᴡᴇʀᴇᴅ ʙʏ [ꜱᴛᴏʀᴍ](https://github.com/KEX001/STORM-SB)** ✨
-
-**ᴄʜᴀɴɴᴇʟ: [ꜱᴛᴏʀᴍ ᴛᴇᴄʜ 🇮🇳](https://t.me/STORM_TECHH)**
-**ꜱᴜᴘᴘᴏʀᴛ: [ꜱᴛᴏʀᴍ ᴄʜᴀᴛᴢ 🇮🇳](https://t.me/STORM_CHATZ)**
+<blockquote><b>❏ ʜ ᴇ ʟ ᴘ   ᴍ ᴇ ɴ ᴜ</b>
+<b>├• ꜱʏꜱᴛᴇᴍ:</b> ꜱʏᴘʜɪx ꜱᴘᴀᴍ ʙᴏᴛ
+<b>├• ᴠᴇʀꜱɪᴏɴ:</b> <code>{config.VERSION}</code>
+<b>├• ᴄʜᴀɴɴᴇʟ:</b> <a href='https://t.me/Syphixlabs'>ꜱʏᴘʜɪx ʟᴀʙꜱ</a>
+<b>└• ꜱᴜᴘᴘᴏʀᴛ:</b> <a href='https://t.me/SyphixHub'>ꜱʏᴘʜɪx ʜᴜʙ</a></blockquote>
+<blockquote>» <i>ꜱᴇʟᴇᴄᴛ ᴀ ᴄᴀᴛᴇɢᴏʀʏ ʙᴇʟᴏᴡ ᴛᴏ ᴠɪᴇᴡ ᴄᴏᴍᴍᴀɴᴅꜱ.</i></blockquote>
 """
+
 HELP_BUTTON = [
     [
       Button.inline("• ꜱᴘᴀᴍ •", data="spam"),
       Button.inline("• ʀᴀɪᴅ •", data="raid")
     ],
     [
-      Button.inline("• ᴇxᴛʀᴀꜱ •", data="extra"),
       Button.inline("• ᴏᴡɴᴇʀ •", data="owner")
     ],
     [
-      Button.url("• ꜱᴜᴘᴘᴏʀᴛ •", "https://t.me/STORM_CHATZ")
+      Button.url("• ꜱᴜᴘᴘᴏʀᴛ •", "https://t.me/SyphixHub")
     ]
-  ]
+]
 
-@KEX1.on(events.NewMessage(incoming=True, pattern=r"\%shelp(?: |$)(.*)" % hl))
+@on_cmd("help")
 async def help(event):
-    if event.sender_id in SUDO_USERS:
+    if event.sender_id in config.SUDO_USERS:
+        event_key = f"{event.chat_id}_{event.id}"
+        my_id = getattr(event.client, "me_id", None)
+        if my_id is None:
+            try:
+                me = await event.client.get_me()
+                my_id = me.id
+            except Exception:
+                return
+        if not await coordinator.resolve_responder(event_key, my_id):
+            return
+
         try:
           await event.client.send_file(event.chat_id,
-              "https://graph.org/file/c3b279aee41f8bbe6466b.jpg",
+              "https://envs.sh/Pa1.mp4",
               caption=HELP_STRING,
+              parse_mode='html',
               buttons=HELP_BUTTON
               )
         except Exception as e:
-            await event.client.send_message(event.chat_id, f"ᴀɴ ᴇxᴄᴇᴘᴛɪᴏɴ ᴏᴄᴄᴜʀᴇᴅ!\n\n**ᴇʀʀᴏʀ:** {str(e)}")
-
-extra_msg = f"""
-**•─╼⃝𖠁 ᴇ​🇽​ᴛʀᴀ ᴄᴏᴍᴍᴀɴᴅꜱ⦂ 𖠁⃝╾─•**
-
- ˣ ᴄʜᴇᴄᴋ ᴘɪɴɢ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴘɪɴɢ
-
- ˣ ʀᴇꜱᴛᴀʀᴛ ʙᴏᴛ ɪᴛ ᴡɪʟʟ ᴛᴀᴋᴇ 5 ᴍɪɴ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʀᴇꜱᴛᴀʀᴛ
-
- ˣ ᴛᴏ ᴀᴄᴛɪᴠᴇ ᴇᴄʜᴏ ᴏɴ ᴀɴʏ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴇᴄʜᴏ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ʀᴍᴇᴄʜᴏ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ᴛᴏ ʟᴇᴀᴠᴇ ɢʀᴏᴜᴘ/ᴄʜᴀɴɴᴇʟ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʟᴇᴀᴠᴇ (ɢʀᴏᴜᴘ/ᴄʜᴀᴛ ɪᴅ)
-🔸 {hl}ʟᴇᴀᴠᴇ (ʏᴘᴇ ɪɴ ᴛʜᴇ ɢʀᴏᴜᴘ ʙᴏᴛ ᴡɪʟʟ ᴀᴜᴛᴏ ʟᴇᴀᴠᴇ ᴛʜᴀᴛ ɢʀᴏᴜᴘ)
-
- ˣ ꜱᴘᴀᴍꜱ ʜᴀɴɢɪɴɢ ᴍᴇꜱꜱᴀɢᴇ ꜰᴏʀ ɢɪᴠᴇɴ ᴄᴏᴜɴᴛᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʜᴀɴɢ (ᴄᴏᴜɴᴛᴇʀ)
-
- ˣ ꜱᴇɴᴅꜱ ᴇᴍᴏᴊɪ ᴡɪᴛʜ ᴛʜᴇ ɢɪᴠᴇ ᴄᴏᴜɴᴛᴇʀ ᴏɴ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴇᴍᴏᴊɪ (ᴄᴏᴜɴᴛᴇʀ) (ᴜꜱᴇʀɴᴀᴍᴇ)
-🔸 {hl}ᴇᴍᴏᴊɪ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ʟᴏᴠᴇ ʀᴀɪᴅ ᴏɴ ᴛʜᴇ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʟᴏᴠᴇʀᴀɪᴅ (ᴄᴏᴜɴᴛᴇʀ) (ᴜꜱᴇʀɴᴀᴍᴇ)
-🔸 {hl}ʟᴏᴠᴇʀᴀɪᴅ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ꜰʟɪʀᴛꜱ ᴡɪᴛʜ ᴛʜᴇ ɢɪᴠᴇ ᴄᴏᴜɴᴛᴇʀ ᴏɴ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ꜰʟɪʀᴛ (ᴄᴏᴜɴᴛᴇʀ) (ᴜꜱᴇʀɴᴀᴍᴇ)
-🔸 {hl}ꜰʟɪʀᴛ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ꜱʜᴀʏᴀʀɪ ʀᴀɪᴅ ᴏɴ ᴛʜᴇ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ꜱʀᴀɪᴅ (ᴄᴏᴜɴᴛᴇʀ) (ᴜꜱᴇʀɴᴀᴍᴇ)
-🔸 {hl}ꜱʀᴀɪᴅ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ) 
-
-**© @KKEX_XD**
-"""
-
+            try:
+                await event.client.send_message(event.chat_id, f"<blockquote><b>❏ ʜ ᴇ ʟ ᴘ   ᴍ ᴇ ɴ ᴜ</b>\n» <b>ᴇxᴄᴇᴘᴛɪᴏɴ ᴏᴄᴄᴜʀʀᴇᴅ:</b> <code>{e}</code></blockquote>", parse_mode='html')
+            except Exception:
+                pass
 
 owner_msg = f"""
-**•─╼⃝𖠁 ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅꜱ⦂ 𖠁⃝╾─•**
+<blockquote><b>❏ ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅꜱ</b></blockquote>
+<blockquote> • ᴄʜᴇᴄᴋ ᴘɪɴɢ: <code>{hl}ping</code>
+ • ʟᴇᴀᴠᴇ ᴄʜᴀᴛ: <code>{hl}leave</code>
 
- ˣ ꜱᴜᴅᴏ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴀᴅᴅꜱᴜᴅᴏ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
-**© @KKEX_XD**
+ • ᴍᴀɴᴀɢᴇ ꜱᴜᴅᴏ
+ ᴜꜱᴀɢᴇ : <code>{hl}addsudo <ʀᴇᴘʟʏ></code> / <code>{hl}sudolist</code>
+ 
+ • ᴍᴀɴᴀɢᴇ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ
+ ᴜꜱᴀɢᴇ : <code>{hl}protect <ʀᴇᴘʟʏ/ɪᴅ></code> / <code>{hl}unprotect <ʀᴇᴘʟʏ/ɪᴅ></code>
+ 
+ • ʀᴇꜱᴛᴀʀᴛ ʙᴏᴛ
+ ᴜꜱᴀɢᴇ : <code>{hl}restart</code></blockquote>
 """      
           
 raid_msg = f"""
-**•─╼⃝𖠁 ʀᴀɪᴅ ᴄᴏᴍᴍᴀɴᴅꜱ: 𖠁⃝╾─•**
-
- ˣ ꜱᴛᴀʀᴛ ᴛʜᴇ ʀᴀɪᴅ ɪɴ ᴛʜᴇ ᴄʜᴀᴛ.
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʀᴀɪᴅ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ʀᴀɪᴅ (ᴄᴏᴜɴᴛꜱ) (ᴜꜱᴇʀɴᴀᴍᴇ)
-
- ˣ ᴀᴄᴛɪᴠᴀᴛᴇꜱ ʀᴇᴘʟʏ ʀᴀɪᴅ ᴏɴ ᴛʜᴇ ᴜꜱᴇʀᴛ.
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʀʀᴀɪᴅ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ʀʀᴀɪᴅ (ᴜꜱᴇʀɴᴀᴍᴇ)
-
- ˣ ᴅᴇᴀᴄᴛɪᴠᴀᴛᴇꜱ ʀᴇᴘʟʏ ʀᴀɪᴅ ᴏɴ ᴛʜᴇ ᴜꜱᴇʀ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴅʀʀᴀɪᴅ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ᴅʀʀᴀɪᴅ (ᴜꜱᴇʀɴᴀᴍᴇ)
-
-**© @KKEX_XD**
+<blockquote><b>❏ ʀᴀɪᴅ ᴄᴏᴍᴍᴀɴᴅꜱ</b></blockquote>
+<blockquote> • ꜱᴛᴀʀᴛ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}raid <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ᴀʙᴜꜱᴇ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}abuse <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ʀᴇᴘʟʏ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}rraid <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code> / <code>{hl}drraid <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ʟᴏᴠᴇ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}loveraid <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ꜰʟɪʀᴛ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}flirt <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ꜱʜᴀʏᴀʀɪ ʀᴀɪᴅ
+ ᴜꜱᴀɢᴇ : <code>{hl}sraid <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code></blockquote>
 """
 
 spam_msg = f"""
-**•─╼⃝𖠁 ꜱᴘᴀᴍ ᴄᴏᴍᴍᴀɴᴅꜱ: 𖠁⃝╾─•**
-
- ˣ ꜱᴘᴀᴍꜱ ᴀ ᴍᴇꜱꜱᴀɢᴇ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ꜱᴘᴀᴍ (ᴄᴏᴜɴᴛꜱ) (ᴀᴜᴛʜᴏʀ)
-🔸 {hl}ꜱᴘᴀᴍ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏɪɴɢ ᴀɴʏ ᴍᴇꜱꜱᴀɢᴇ)
-
- ˣ ᴘᴏʀᴍᴏɢʀᴀᴘʜʏ ꜱᴘᴀᴍ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ᴘꜱᴘᴀᴍ (ᴄᴏᴜɴᴛꜱ)
-
- ˣ ꜱᴘᴀᴍ ᴛʜᴇ ᴄʜᴀᴛ ᴡɪᴛʜ ɢᴏᴏᴅ ᴍᴏʀɴɪɴɢ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ɢᴍ (ᴄᴏᴜɴᴛꜱ)
-🔸 {hl}ɢᴍ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ɢᴍ -ᴜ
-🔸 {hl}ɢᴍ -ᴜ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ꜱᴘᴀᴍ ᴛʜᴇ ᴄʜᴀᴛ ᴡɪᴛʜ ɢᴏᴏᴅ ᴀꜰᴛᴇʀɴᴏᴏɴ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ɢᴀ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ɢᴀ -ᴜ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ
-
- ˣ ꜱᴘᴀᴍ ᴛʜᴇ ᴄʜᴀᴛ ᴡɪᴛʜ ɢᴏᴏᴅ ɴɪɢʜᴛ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ɢɴ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ɢɴ -ᴜ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
- ˣ ꜱᴘᴀᴍ ᴛʜᴇ ᴄʜᴀᴛ ᴡɪᴛʜ ʙᴅᴀʏ ᴍꜱɢꜱ
-
-👨‍💻 ᴜꜱᴀɢᴇ :
-🔸 {hl}ʙꜱᴘᴀᴍ (ᴄᴏᴜɴᴛꜱ) (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-🔸 {hl}ʙꜱᴘᴀᴍ -ᴜ (ʀᴇᴘʟʏ ᴛᴏ ᴀɴʏᴏɴᴇ)
-
-** © @KKEX_XD**
+<blockquote><b>❏ ꜱᴘᴀᴍ ᴄᴏᴍᴍᴀɴᴅꜱ</b></blockquote>
+<blockquote> • ꜱᴘᴀᴍ ᴍᴇꜱꜱᴀɢᴇ
+ ᴜꜱᴀɢᴇ : <code>{hl}spam <ᴄᴏᴜɴᴛ> <ᴛᴇxᴛ ᴏʀ ʀᴇᴘʟʏ ᴛᴏ ᴀ ᴍᴇꜱꜱᴀɢᴇ></code>
+ 
+ • ᴘᴏʀɴᴏɢʀᴀᴘʜʏ ꜱᴘᴀᴍ
+ ᴜꜱᴀɢᴇ : <code>{hl}pspam <ᴄᴏᴜɴᴛ></code>
+ 
+ • ʙɪʀᴛʜᴅᴀʏ ꜱᴘᴀᴍ
+ ᴜꜱᴀɢᴇ : <code>{hl}bspam <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ᴇᴍᴏᴊɪ ꜱᴘᴀᴍ
+ ᴜꜱᴀɢᴇ : <code>{hl}emoji <ᴄᴏᴜɴᴛ> <ᴜꜱᴇʀɴᴀᴍᴇ ᴏʀ ʀᴇᴘʟʏ></code>
+ 
+ • ʜᴀɴɢ ꜱᴘᴀᴍ
+ ᴜꜱᴀɢᴇ : <code>{hl}hang <ᴄᴏᴜɴᴛ></code>
+ 
+ • ᴇᴄʜᴏ ᴜꜱᴇʀ
+ ᴜꜱᴀɢᴇ : <code>{hl}echo <ʀᴇᴘʟʏ></code> / <code>{hl}rmecho <ʀᴇᴘʟʏ></code></blockquote>
 """                                
            
-@KEX1.on(events.CallbackQuery(pattern=r"help_back"))
+@on_callback(pattern=r"help_back")
 async def helpback(event):
-    if event.query.user_id in SUDO_USERS:    
-        await event.edit(
-            HELP_STRING,
-            buttons=[
-              [
-                Button.inline("• ꜱᴘᴀᴍ •", data="spam"),
-                Button.inline("• ʀᴀɪᴅ •", data="raid")
-              ],
-              [
-                Button.inline("• ᴇxᴛʀᴀꜱ •", data="extra"),
-                Button.inline("• ᴏᴡɴᴇʀ •", data="owner")
-              ],
-              [
-                Button.url("• ꜱᴜᴘᴘᴏʀᴛ •", "https://t.me/STORM_CHATZ")
-              ]
-            ]
-          )
+    if event.query.user_id in config.SUDO_USERS:    
+        try:
+            await event.edit(
+                HELP_STRING,
+                parse_mode='html',
+                buttons=HELP_BUTTON
+              )
+        except Exception:
+            pass
     else:
-        await event.answer("ɴᴏᴏʙ ! ᴍᴀᴋᴇ ʏᴏᴜʀ ᴏᴡɴ ꜱᴛᴏʀᴍ ꜱᴘᴀᴍ ʙᴏᴛꜱ !! @KKEX_XD", cache_time=0, alert=True)
+        try:
+            await event.answer("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ʙᴏᴛ.", cache_time=0, alert=True)
+        except Exception:
+            pass
 
 
-@KEX1.on(events.CallbackQuery(pattern=r"spam"))
+@on_callback(pattern=r"spam")
 async def help_spam(event):
-    if event.query.user_id in SUDO_USERS:    
-        await event.edit(spam_msg,
-              buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
-              ) 
+    if event.query.user_id in config.SUDO_USERS:    
+        try:
+            await event.edit(spam_msg,
+                  parse_mode='html',
+                  buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
+                  ) 
+        except Exception:
+            pass
     else:
-        await event.answer("ɴᴏᴏʙ ! ᴍᴀᴋᴇ ʏᴏᴜʀ ᴏᴡɴ ꜱᴛᴏʀᴍ ꜱᴘᴀᴍ ʙᴏᴛꜱ !! @KKEX_XD", cache_time=0, alert=True)
+        try:
+            await event.answer("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ʙᴏᴛ.", cache_time=0, alert=True)
+        except Exception:
+            pass
 
 
-@KEX1.on(events.CallbackQuery(pattern=r"raid"))
+@on_callback(pattern=r"raid")
 async def help_raid(event):
-    if event.query.user_id in SUDO_USERS:
-        await event.edit(raid_msg,
-            buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
-          )
+    if event.query.user_id in config.SUDO_USERS:
+        try:
+            await event.edit(raid_msg,
+                 parse_mode='html',
+                 buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
+               )
+        except Exception:
+            pass
     else:
-        await event.answer("ɴᴏᴏʙ ! ᴍᴀᴋᴇ ʏᴏᴜʀ ᴏᴡɴ ꜱᴛᴏʀᴍ ꜱᴘᴀᴍ ʙᴏᴛꜱ !! @KKEX_XD", cache_time=0, alert=True)
+        try:
+            await event.answer("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ʙᴏᴛ.", cache_time=0, alert=True)
+        except Exception:
+            pass
 
 
-@KEX1.on(events.CallbackQuery(pattern=r"extra"))
-async def help_extra(event):
-    if event.query.user_id in SUDO_USERS:
-        await event.edit(extra_msg,
-            buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
-            )
+
+
+@on_callback(pattern=r"owner")
+async def help_owner(event):
+    if event.query.user_id in config.SUDO_USERS:
+        try:
+            await event.edit(owner_msg,
+                parse_mode='html',
+                buttons=[[Button.inline("🔙 ʙᴀᴄᴋ", data="help_back"),],],
+                )
+        except Exception:
+            pass
     else:
-        await event.answer("ɴᴏᴏʙ ! ᴍᴀᴋᴇ ʏᴏᴜʀ ᴏᴡɴ ꜱᴛᴏʀᴍ ꜱᴘᴀᴍ ʙᴏᴛꜱ !! @KKEX_XD", cache_time=0, alert=True)
+        try:
+            await event.answer("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀᴜᴛʜᴏʀɪᴢᴇᴅ ᴛᴏ ᴜꜱᴇ ᴛʜɪꜱ ʙᴏᴛ.", cache_time=0, alert=True)
+        except Exception:
+            pass
