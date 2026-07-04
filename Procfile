@@ -1,1 +1,1 @@
-STORM: python -m main.py
+web: ./start.sh
