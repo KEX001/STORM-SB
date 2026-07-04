@@ -1,20 +1,9 @@
-# Core dependencies
 telethon
 cryptg
-
-# Web server
 flask
 flask_restful
 gunicorn
-
-# Heroku integration
 heroku3
-
-# Environment management
 python-dotenv
-
-# Async/await backport (for Python < 3.7)
 async_generator
-
-# Security dependencies
 pycryptodome
