@@ -25,6 +25,7 @@ SUDO_USERS = list(dict.fromkeys(SUDO_USERS))
 import time
 start_time = time.time()
 VERSION = getenv("VERSION", "ʜꜰꜱ.ʀᴇᴠᴀᴍᴘᴇᴅ @ᴘ+")
+UPSTREAM_REPO = getenv("UPSTREAM_REPO", "https://github.com/KEX001/STORM-SB.git")
 PROTECTED_USERS = list(map(int, getenv("PROTECTED_USERS", "").split()))
 PROTECTED_GROUPS = list(map(int, getenv("PROTECTED_GROUPS", "").split()))
 
