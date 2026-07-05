@@ -1,0 +1,38 @@
+{
+  "name": "STORM-SB",
+  "description": "A Premium Telethon Spam & Raid Engine",
+  "repository": "https://github.com/KEX001/STORM-SB",
+  "keywords": ["telegram", "telethon", "bot", "spam", "raid"],
+  "env": {
+    "API_ID": {
+      "description": "Your Telegram API ID from my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API HASH from my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Your primary Bot Token from @BotFather",
+      "required": true
+    },
+    "OWNER_ID": {
+      "description": "Your Telegram User ID (Grants ultimate control)",
+      "required": true
+    },
+    "SUDO_USERS": {
+      "description": "Space-separated User IDs of people you want to give access to",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  }
+}
