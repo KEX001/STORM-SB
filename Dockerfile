@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends ffmpeg curl gcc g++ && \
+    apt-get install -y --no-install-recommends git ffmpeg curl gcc g++ && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
