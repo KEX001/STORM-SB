@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: STORM-SB
+    env: docker
+    plan: free
+    branch: main
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: BOT_TOKEN
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: SUDO_USERS
+        sync: false
